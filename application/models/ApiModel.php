@@ -71,11 +71,12 @@ Class ApiModel extends CI_Model
 	 
 	   if($query -> num_rows() == 1)
 	   {
-		if($result)
+		if($query)
 		{
 			 
-		 foreach($result as $row)
+		 foreach($query->result() as $row)
 		 {
+		
 			$app_id = $row->app_id;
 		 }
 		 return $app_id;

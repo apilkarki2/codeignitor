@@ -68,7 +68,8 @@ class Home extends CI_Controller
 
 			
 			$registatoin_id = $this->ApiModel->getRegIds($country,$app_name);
-			 $gcm_key = $this->ApiModel->countries($app_name);
+			 $gcm_key = $this->ApiModel->getAppKey($app_name);
+			 
 			if (count($registatoin_id)>0) {
                $reg_ids  = array_chunk($registatoin_id,998);
 			  
