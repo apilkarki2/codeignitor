@@ -8,7 +8,7 @@ class Api extends CI_Controller {
 	   parent::__construct();
 	   $this->load->model('ApiModel');
 	 }
-	public function AddAppData($app_name='', $regID='',$country='',$app_key='') {
+	public function AddAppData($app_name='', $regID='',$country='',$app_key='', $newRegID='') {
 		if(empty($app_name)) {
 			$this->Error = 1;
 			$this->Msg = "App name not found.";
@@ -25,16 +25,40 @@ class Api extends CI_Controller {
 			$this->Error = 1;
 			$this->Msg = "app_key not found.";
 		}
-		else {
-			if($this->ApiModel->Insert($app_name, $regID,$country,$app_key))
-			{
-				$this->Success = 1;
-				$this->Msg = "Successfully Save.";
+		else {                        
+             if(empty($newRegID)){
+				if($this->ApiModel->getRegId($app_name,$app_key,$regID) == false) 
+				{
+					if($this->ApiModel->Insert($app_name, $regID,$country,$app_key))
+					{
+						$this->Success = 1;
+						$this->Msg = "Successfully Save.";
+					}
+					else 
+					{
+						$this->Error = 1;
+						$this->Msg = "Problem in inserting database.";
+					}
+				}
+				else{
+					$this->Success = 1;
+					$this->Msg = "Successfully Save.";
+				}
 			}
-			else 
+			else
 			{
-				$this->Error = 1;
-				$this->Msg = "Problem in inseting database.";
+               	$affectedRows = $this->ApiModel->Update($app_name,$app_key,$regID,$newRegID);
+
+                if ($affectedRows > 0) 
+				{
+					$this->Success = 1;
+					$this->Msg = "Successfully Save.";
+				}
+				else
+				{
+					$this->Error = 1;
+					$this->Msg = "Problem in updating database.";
+				}
 			}
 		}
 		

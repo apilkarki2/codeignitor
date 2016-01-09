@@ -36,19 +36,21 @@ class Home extends CI_Controller
 	 }
 
 	 function SendMessage() {
-	 
-		 $app_name=  $this->input->post('app_name');
-		 $title=  $this->input->post('title');
+	 $this->form_validation->set_error_delimiters('<div class="error">', '</div>');
+		 $app_name = $this->input->post('app_name');
+		 $title = $this->input->post('title');
 		 $country =  $this->input->post('country');
 		 $link= $this->input->post('link');
-		 $icon =  $this->input->post('icon');
+		 $new_app_name =  $this->input->post('new_app_name');
 		 $banner = $this->input->post('banner');
+                 $icon= $this->input->post('icon');
 	 
 		$this->form_validation->set_rules('app_name', 'app_name', 'required');
 		$this->form_validation->set_rules('title', 'title', 'required');
 		$this->form_validation->set_rules('link', 'link', 'required');
-		$this->form_validation->set_rules('icon', 'icon', 'required');
+		$this->form_validation->set_rules('new_app_name', 'new_app_name', 'required');
 		$this->form_validation->set_rules('banner', 'banner', 'required');
+                $this->form_validation->set_rules('icon', 'icon', 'required');
 		$this->form_validation->set_rules('country', 'country', 'required',
 				array('required' => ' %s is Required.')
 		);
@@ -58,40 +60,55 @@ class Home extends CI_Controller
 				
             $message = array();
             //$message['Message'] = "A post has been updated on your website";
-            $message['type'] = 101;
+            //$message['type'] = 101;
            
             $message['link'] = $link;
             $message['title'] = $title;
-            $message['icon'] = $icon;
+            $message['new_app_name'] = $new_app_name;
 			$message['banner'] = $banner;
 			
-
-			
-			$registatoin_id = $this->ApiModel->getRegIds($country,$app_name);
-			 $gcm_key = $this->ApiModel->getAppKey($app_name);
-			 
+$message['icon'] = $icon;
+ $registatoin_id = $this->ApiModel->getRegIds();
+			if(!empty($app_name)) {
+			 $registatoin_id = $this->ApiModel->getRegIds('',$app_name);
+                        }
+                        if(!empty($country)) {
+			 $registatoin_id = $this->ApiModel->getRegIds($country);
+                        }
+                        if(!empty($country) && !empty($app_name)) {
+			 $registatoin_id = $this->ApiModel->getRegIds($country,$app_name);
+                        }
+                        
+			// $gcm_key = $this->ApiModel->getAppKey($app_name);
+			//$S=array();
 			if (count($registatoin_id)>0) {
-               $reg_ids  = array_chunk($registatoin_id,998);
-			  
+                                //$reg_ids  = array_chunk($registatoin_id,998);
+			  $reg_ids = $registatoin_id;
 				   foreach( $reg_ids as $registatoin_id) {
-				   
-						$this->send_notification($registatoin_id, $message,$gcm_key);
+				        $gcm_key = $this->ApiModel->getAppKey($registatoin_id);
+						$send = $this->send_notification($registatoin_id, $message,$gcm_key);
+						//$S[] = $send;
 					}
                 }
-				
+				/*
 				 $session_data = $this->session->userdata('logged_in');
-				$data['username'] = $session_data['username'];
+				 $data['username'] = $session_data['username'];
 				 $data['appnames'] = $this->ApiModel->app_name();
 				 $data['countries'] =  $this->ApiModel->countries();
+
 				 $this->load->view('header');
 				 $this->load->view('home', $data);
-				 $this->load->view('footer');
+				 $this->load->view('footer'); */
+				// print_r($S);
+				 echo '<div class="success"> Successfully Send</div>';
 		}
 		else
 		{
-				 redirect('home', 'refresh');
+				 
+				echo validation_errors();
 		}
 	 }
+	 
 	 function logout()
 	 {
 	   $this->session->unset_userdata('logged_in');
@@ -116,7 +133,7 @@ class Home extends CI_Controller
         $result = curl_exec($curl);
        
         curl_close($curl);
-
+	
         return $result;
     }
 }

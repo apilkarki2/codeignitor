@@ -24,7 +24,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 //$config['base_url'] = 'http://fivelogix.com/app/';
-$config['base_url'] = 'http://localhost/zaheer';
+//$config['base_url'] = 'http://droidearn.com/app/';
+$config['base_url'] = 'http://localhost/zaheernew/';
 
 /*
 |--------------------------------------------------------------------------

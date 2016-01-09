@@ -79,11 +79,13 @@ $db['default'] = array(
 	/*'username' => 'fivelogi_app',
 	'password' => 'app123!@#',
 	'database' => 'fivelogi_app',*/
-	
+
+	//'username' => 'bilalabb_apps',
+	//'password' => 'T8giiSd?(QaJ',
+	//'database' => 'bilalabb_app',
 	'username' => 'root',
 	'password' => '',
 	'database' => 'zaheer',
-	
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,

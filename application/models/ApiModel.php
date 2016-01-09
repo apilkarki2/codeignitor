@@ -16,9 +16,27 @@ Class ApiModel extends CI_Model
 				return false;
 			}
 	 }
+
+         function Update($appname,$appkey,$regID,$newRegID)
+	 {
+		$data = array(
+		  'regIID' => $newRegID
+		);			
+		$this->db-> where('app_name', $appname);
+		$this->db-> where('app_id', $appkey);
+		$this->db-> where('regIID', $regID);
+		$this->db->update('app_data', $data);
+		
+		/*$report = array();
+                $report['error'] = 1;
+                $report['message'] = "Unable to Update Record";
+                return $report;*/
+                return $this->db->affected_rows();
+	 }
+
 	 function countries()
 	 {
-		$this->db->select('country');
+	   $this->db->select('country');
 	   $this->db->from("app_data");
 	   $this->db->group_by('country');
 	   $query =  $this->db->get();
@@ -43,13 +61,17 @@ Class ApiModel extends CI_Model
 	   return $r;
 	 }
 	 
-	 function getRegIds($country,$app)
+	 function getRegIds($country='',$app='')
 	 {
 	 
 	   $this->db->select('regIID');
 	   $this->db->from("app_data");
+if($app != '') {
 	   $this->db-> where('app_name', $app);
+}
+if($country != '') {
 	   $this->db-> where('country', $country);
+}
 	 
 	   $query =  $this->db->get();
 	   $query = $query->result_array();
@@ -60,11 +82,33 @@ Class ApiModel extends CI_Model
 	   return $r;
 	 }
 	 
+         function getRegId($appname,$appkey,$regid)
+	 {	 
+	   $this->db->select('regIID');
+	   $this->db->from("app_data");
+	   $this->db-> where('app_name', $appname);
+	   $this->db-> where('app_id', $appkey);
+	   $this->db-> where('regIID', $regid);
+	   $this->db-> limit(1);
+
+	   $query =  $this -> db -> get();
+
+	   if($query -> num_rows() == 1)
+	   {
+		 return true;
+	   }
+	   else
+	   {
+		 return false;
+	   }
+	 }
+
+
 	 function getAppKey($app)
 	 {
 	   $this -> db -> select('app_id');
 	   $this -> db -> from("app_data");
-	    $this->db-> where('app_name', $app);
+	    $this->db-> where('regIID', $app);
 	   $this -> db -> limit(1);
 	 
 	   $query = $this -> db -> get();
@@ -76,7 +120,6 @@ Class ApiModel extends CI_Model
 			 
 		 foreach($query->result() as $row)
 		 {
-		
 			$app_id = $row->app_id;
 		 }
 		 return $app_id;

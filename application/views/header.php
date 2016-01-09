@@ -8,6 +8,7 @@
 		<link rel="stylesheet" href="<?=base_url("css/template.css")?>" type="text/css" media="screen" charset="utf-8" />
 		<link rel="stylesheet" href="<?=base_url("css/colour.css")?>" type="text/css" media="screen" charset="utf-8" />
 		<!--[if IE]><![if gte IE 6]><![endif]-->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 		<script src="<?=base_url("js/glow/1.7.0/core/core.js")?>" type="text/javascript"></script>
 		<script src="<?=base_url("js/glow/1.7.0/widgets/widgets.js")?>" type="text/javascript"></script>
 		<link href="<?=base_url("js/glow/1.7.0/widgets/widgets.css")?>" type="text/css" rel="stylesheet" />
