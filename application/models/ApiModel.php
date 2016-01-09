@@ -47,6 +47,8 @@ Class ApiModel extends CI_Model
 	   }
 	   return $r;
 	 }
+	 
+	 
 	 function app_name()
 	 {
 	   $this->db->select('app_name');
@@ -59,6 +61,27 @@ Class ApiModel extends CI_Model
 		$r[$row["app_name"]] = $row["app_name"];
 	   }
 	   return $r;
+	 }
+	 
+	 function getStats()
+	 {
+	   $this->db->select('app_name');
+	   $this->db->select('count(*) as totalusers');
+	   $this->db->from("app_data");
+	   $this->db->group_by('app_name');
+	   $query =  $this->db->get();
+	   $query = $query->result_array();
+	    /*$r = array();
+	   foreach($query as $row) {
+		$r[] = $row;
+	   }*/
+	   return $query;
+	 }
+	 
+	 function DeleteData($app_name)
+	 {
+	   $this->db->where_in('app_name', $app_name);
+	   $this->db->delete('app_data');
 	 }
 	 
 	 function getRegIds($country='',$app='')

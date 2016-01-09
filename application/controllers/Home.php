@@ -22,6 +22,7 @@ class Home extends CI_Controller
 		 $data['username'] = $session_data['username'];
 		 $data['appnames'] = $this->ApiModel->app_name();
 		 $data['countries'] =  $this->ApiModel->countries();
+		 $data['stats'] =$this->ApiModel->getStats();
 		 $this->load->view('header');
 		 $this->load->view('home', $data);
 		 $this->load->view('footer');
@@ -35,6 +36,13 @@ class Home extends CI_Controller
 	   }
 	 }
 
+	function DeleteApp() {
+	$app_name = $this->input->post('ids');
+	 $this->ApiModel->DeleteData($app_name);
+	 echo '<div class="success">Record Deleted Successfully.</div>';
+	}
+
+	
 	 function SendMessage() {
 	 $this->form_validation->set_error_delimiters('<div class="error">', '</div>');
 		 $app_name = $this->input->post('app_name');
