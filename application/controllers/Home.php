@@ -91,10 +91,13 @@ $message['icon'] = $icon;
 			//$S=array();
 			if (count($registatoin_id)>0) {
                                 //$reg_ids  = array_chunk($registatoin_id,998);
+								//$reg_ids=array();
 			  $reg_ids = $registatoin_id;
 				   foreach( $reg_ids as $registatoin_id) {
 				        $gcm_key = $this->ApiModel->getAppKey($registatoin_id);
-						$send = $this->send_notification($registatoin_id, $message,$gcm_key);
+						$r=array();
+						$r[] = $registatoin_id;
+						$send = $this->send_notification($r, $message,$gcm_key);
 						//$S[] = $send;
 					}
                 }
@@ -139,7 +142,7 @@ $message['icon'] = $icon;
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($fields));
         $result = curl_exec($curl);
-       
+      
         curl_close($curl);
 	
         return $result;
