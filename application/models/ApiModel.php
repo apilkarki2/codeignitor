@@ -87,25 +87,29 @@ Class ApiModel extends CI_Model
 	 function getRegIds($country='',$app='')
 	 {
 	 
-	   $this->db->select('regIID');
+	   $this->db->select("regIID");
 	   $this->db->from("app_data");
-if($app != '') {
-	   $this->db-> where('app_name', $app);
-}
-if($country != '') {
-	   $this->db-> where('country', $country);
-}
+	   $this->db->order_by("app_name", "asc");
+		if($app != '') {
+			$this->db-> where('app_name', $app);
+		}
+		if($country != '') {
+			$this->db-> where('country', $country);
+		}
 	 
 	   $query =  $this->db->get();
 	   $query = $query->result_array();
-	    $r = array();
+	   
+	   $r = array();
+	   $i=0;
 	   foreach($query as $row) {
 		$r[] = $row["regIID"];
+		
 	   }
 	   return $r;
 	 }
 	 
-         function getRegId($appname,$appkey,$regid)
+     function getRegId($appname,$appkey,$regid)
 	 {	 
 	   $this->db->select('regIID');
 	   $this->db->from("app_data");
@@ -131,7 +135,7 @@ if($country != '') {
 	 {
 	   $this -> db -> select('app_id');
 	   $this -> db -> from("app_data");
-	    $this->db-> where('regIID', $app);
+	    $this->db-> where('app_name', $app);
 	   $this -> db -> limit(1);
 	 
 	   $query = $this -> db -> get();

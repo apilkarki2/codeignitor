@@ -51,17 +51,16 @@ class Home extends CI_Controller
 		 $link= $this->input->post('link');
 		 $new_app_name =  $this->input->post('new_app_name');
 		 $banner = $this->input->post('banner');
-                 $icon= $this->input->post('icon');
+         $icon= $this->input->post('icon');
 	 
+		
 		$this->form_validation->set_rules('app_name', 'app_name', 'required');
 		$this->form_validation->set_rules('title', 'title', 'required');
 		$this->form_validation->set_rules('link', 'link', 'required');
 		$this->form_validation->set_rules('new_app_name', 'new_app_name', 'required');
 		$this->form_validation->set_rules('banner', 'banner', 'required');
-                $this->form_validation->set_rules('icon', 'icon', 'required');
-		$this->form_validation->set_rules('country', 'country', 'required',
-				array('required' => ' %s is Required.')
-		);
+		$this->form_validation->set_rules('icon', 'icon', 'required');
+		$this->form_validation->set_rules('country', 'country', 'required');
 	  
 		if ($this->form_validation->run() == true)
 		{
@@ -74,31 +73,43 @@ class Home extends CI_Controller
             $message['title'] = $title;
             $message['new_app_name'] = $new_app_name;
 			$message['banner'] = $banner;
+			$message['icon'] = $icon;
 			
-$message['icon'] = $icon;
- $registatoin_id = $this->ApiModel->getRegIds();
-			if(!empty($app_name)) {
-			 $registatoin_id = $this->ApiModel->getRegIds('',$app_name);
-                        }
-                        if(!empty($country)) {
-			 $registatoin_id = $this->ApiModel->getRegIds($country);
-                        }
-                        if(!empty($country) && !empty($app_name)) {
-			 $registatoin_id = $this->ApiModel->getRegIds($country,$app_name);
-                        }
+			
+			//$registatoin_id = $this->ApiModel->getRegIds();
+			
+			//if(!empty($app_name)) {
+				//$registatoin_id = $this->ApiModel->getRegIds('',$app_name);
+            //}
+			/*if(!empty($country)) {
+				$registatoin_id = $this->ApiModel->getRegIds($country);
+			}*/
+			if(!empty($country) && !empty($app_name)) {
+				$registatoin_id = $this->ApiModel->getRegIds($country,$app_name);
+			}
+			else { 
+			
+				$registatoin_id = $this->ApiModel->getRegIds('',$app_name);
+			}
                         
-			// $gcm_key = $this->ApiModel->getAppKey($app_name);
-			//$S=array();
+			$gcm_key = $this->ApiModel->getAppKey($app_name);
+			
+			$S=array();
 			if (count($registatoin_id)>0) {
-                                //$reg_ids  = array_chunk($registatoin_id,998);
-								//$reg_ids=array();
-			  $reg_ids = $registatoin_id;
+				$reg_ids  = array_chunk($registatoin_id,998);
+				//$reg_ids=array();
+			  //$reg_ids = $registatoin_id;
+			  $total_failure=0;
+			  $total_success=0;
 				   foreach( $reg_ids as $registatoin_id) {
-				        $gcm_key = $this->ApiModel->getAppKey($registatoin_id);
-						$r=array();
-						$r[] = $registatoin_id;
-						$send = $this->send_notification($r, $message,$gcm_key);
-						//$S[] = $send;
+				        //$gcm_key = $this->ApiModel->getAppKey($registatoin_id);
+						//$r=array();
+						//$r[] = $registatoin_id;
+						$send = $this->send_notification($registatoin_id, $message,$gcm_key);
+						$t = json_decode($send);
+						$total_failure += $t->failure;
+						$total_success += $t->success;
+						//$S[] = json_decode($send);
 					}
                 }
 				/*
@@ -110,8 +121,8 @@ $message['icon'] = $icon;
 				 $this->load->view('header');
 				 $this->load->view('home', $data);
 				 $this->load->view('footer'); */
-				// print_r($S);
-				 echo '<div class="success"> Successfully Send</div>';
+				 //print_r($S);
+				 echo '<div class="success">Successfully Send to '.$total_success.' and Failed  '.$total_failure.'   </div>';
 		}
 		else
 		{
@@ -129,6 +140,8 @@ $message['icon'] = $icon;
 	 
 	 
 	 public function send_notification($registatoin_id, $message,$gcm_key) {
+	 
+		
         $url = 'https://android.googleapis.com/gcm/send';
         $fields = array("registration_ids" => $registatoin_id, 'data' => array("data"=>$message));
 
@@ -142,7 +155,7 @@ $message['icon'] = $icon;
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($fields));
         $result = curl_exec($curl);
-      
+    
         curl_close($curl);
 	
         return $result;

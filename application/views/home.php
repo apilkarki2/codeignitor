@@ -12,7 +12,7 @@ $data = array(
              
               
             );
-array_unshift($appnames, "All Apps");
+//array_unshift($appnames, "All Apps");
 echo form_dropdown('app_name', $appnames); 
 
 echo form_label('Select Country', 'select app');
