@@ -95,8 +95,10 @@ class Home extends CI_Controller
 			$gcm_key = $this->ApiModel->getAppKey($app_name);
 			
 			$S=array();
+			
 			if (count($registatoin_id)>0) {
 				$reg_ids  = array_chunk($registatoin_id,998);
+				//echo "<pre>";print_r( $reg_ids); exit;
 				//$reg_ids=array();
 			  //$reg_ids = $registatoin_id;
 			  $total_failure=0;
@@ -107,6 +109,7 @@ class Home extends CI_Controller
 						//$r[] = $registatoin_id;
 						$send = $this->send_notification($registatoin_id, $message,$gcm_key);
 						$t = json_decode($send);
+						echo "<pre>";print_r($t); exit;
 						$total_failure += $t->failure;
 						$total_success += $t->success;
 						//$S[] = json_decode($send);
